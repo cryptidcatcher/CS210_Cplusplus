@@ -1,0 +1,119 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <map>
+using namespace std;
+
+class Grocery {                           //info about Grocery
+public:
+	void SetMenuChoice(int userChoice);  //sets the menu choice
+	void SetItemCount(int userCount); //sets the item count
+
+private:
+	int menuChoice = 0;
+	int itemCount = 0;
+	string currItem = "unknown";
+	int currItemNum = 0;
+
+};
+
+//sets the menu choice
+void Grocery::SetMenuChoice(int userChoice) {
+	menuChoice = userChoice;
+}
+
+//sets the item count
+void Grocery::SetItemCount(int userCount) {
+	itemCount = userCount;
+}
+
+
+
+int main() {
+	int userMenuChoice = 0;
+	int i = 0;
+	string userWord = "unknown";
+	string currWord = "unkown:";
+	int wordFreq = 0;
+
+	Grocery userGrocery;
+	ifstream inFS; //input file stream
+
+	cin >> userMenuChoice;
+	userGrocery.SetMenuChoice(userMenuChoice);
+
+
+	inFS.open("CS210_Project_Three_Input_File.txt"); // open the data txt file
+	if (!inFS.is_open()) {
+		cout << "Could not open file CS210_Project_Three_Input_File.txt." << endl;
+		return 1; // 1 indicates error
+	}
+
+	map <string, int>groceryList;
+
+	switch (userMenuChoice) { //menu based on input
+		case 1:
+			cout << "What would you like to look for?" << endl;
+			cin >> userWord;
+
+			while (!inFS.eof()) {     //counts times a word occurs
+				inFS >> currWord;
+				if (!inFS.fail()) {
+					if (currWord == userWord) {
+						++wordFreq;
+					}
+				}
+			}
+					
+			userGrocery.SetItemCount(wordFreq);
+			cout << wordFreq << endl;
+
+			break;
+
+		case 2:
+
+			while (!inFS.eof()) { //loops through each word in the file
+				inFS >> userWord; 
+				while (!inFS.eof()) {     //counts times a word occurs
+					inFS >> currWord;
+					if (!inFS.fail()) {
+						if (currWord == userWord) {
+							++wordFreq;
+						}
+					}
+				}
+				groceryList.emplace(userWord, wordFreq); //adds word and freq. to map
+				cout << userWord << " " << wordFreq << endl; /// prints word and freq.
+			}
+
+			break;
+		case 3:
+			while (!inFS.eof()) { //loops through each word in the file
+				inFS >> userWord;
+				while (!inFS.eof()) {     //counts times a word occurs
+					inFS >> currWord;
+					if (!inFS.fail()) {
+						if (currWord == userWord) {
+							++wordFreq;
+						}
+					}
+				}
+				groceryList.emplace(userWord, wordFreq); //adds word and freq. to map
+				cout << userWord << " ";
+				for (i = 0; i < wordFreq; ++i) { //prints frequency as histogram
+					cout << "*";
+				}
+				cout << "" << endl;
+			
+
+			break;
+		case 4: //just exits program
+			break;
+		default:    //user validation, only 4 menu options.
+			cout << "Invalid entry." << endl; 
+			break;
+	}
+
+	inFS.close(); //closes file
+	return 0;
+}
